@@ -28,6 +28,5 @@ class VideoStreamingApiApplicationTests {
 
 	@Test
 	void contextLoads() {
-		// If this test runs successfully, the context is loaded properly.
 	}
 }

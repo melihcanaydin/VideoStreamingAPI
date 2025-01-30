@@ -112,6 +112,36 @@
 			"response": []
 		},
 		{
+			"name": "POST /videos/engagement/{id}/view",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/videos/engagement/1/view",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8080",
+					"path": ["videos", "engagement", "1", "view"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST /videos/engagement/{id}/like",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/videos/engagement/1/like",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8080",
+					"path": ["videos", "engagement", "1", "like"]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "GET /videos/engagement/{id}",
 			"request": {
 				"method": "GET",

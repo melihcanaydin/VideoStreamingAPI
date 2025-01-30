@@ -31,6 +31,11 @@ public class VideoService {
         return savedVideo;
     }
 
+    public Video getVideoById(Long id) {
+        return videoRepository.findById(id)
+                .orElseThrow(() -> new VideoNotFoundException("Video not found with id: " + id));
+    }
+
     public void deleteVideo(Long id) {
         logger.info("Deleting video with ID: {}", id);
         Video video = videoRepository.findById(id)
@@ -38,7 +43,7 @@ public class VideoService {
                     logger.error("Video with ID: {} not found for deletion", id);
                     return new VideoNotFoundException("Video not found");
                 });
-        video.setActive(true);
+        video.setActive(false);
         videoRepository.save(video);
         logger.info("Video with ID: {} soft-deleted successfully", id);
     }
