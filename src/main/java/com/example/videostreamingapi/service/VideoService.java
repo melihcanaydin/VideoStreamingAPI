@@ -19,50 +19,44 @@ public class VideoService {
         this.videoRepository = videoRepository;
     }
 
-    public List<Video> getAllVideos() {
-        logger.info("Fetching all videos");
+    public List<Video> listVideos() {
         return videoRepository.findAllByActiveTrue();
     }
 
-    public Video createVideo(Video video) {
-        logger.info("Creating video with title: {}", video.getTitle());
-        Video savedVideo = videoRepository.save(video);
-        logger.debug("Video created successfully with ID: {}", savedVideo.getId());
-        return savedVideo;
+    public Video publishVideo(Video video) {
+        video.setActive(true);
+        return videoRepository.save(video);
     }
 
     public Video getVideoById(Long id) {
-        return videoRepository.findById(id)
-                .orElseThrow(() -> new VideoNotFoundException("Video not found with id: " + id));
+        return videoRepository.findByIdAndActiveTrue(id)
+                .orElseThrow(() -> new VideoNotFoundException("Active video not found with ID: " + id));
     }
 
-    public void deleteVideo(Long id) {
-        logger.info("Deleting video with ID: {}", id);
+    public String playVideo(Long videoId) {
+        Video video = videoRepository.findByIdAndActiveTrue(videoId)
+                .orElseThrow(() -> new VideoNotFoundException("Active video not found with ID: " + videoId));
+
+        return "Streaming video: " + video.getTitle();
+    }
+
+    public void delistVideo(Long id) {
         Video video = videoRepository.findById(id)
-                .orElseThrow(() -> {
-                    logger.error("Video with ID: {} not found for deletion", id);
-                    return new VideoNotFoundException("Video not found");
-                });
+                .orElseThrow(() -> new VideoNotFoundException("Video not found"));
+
         video.setActive(false);
         videoRepository.save(video);
-        logger.info("Video with ID: {} soft-deleted successfully", id);
     }
 
-    public Video updateVideo(Long id, Video updatedVideo) {
-        logger.info("Updating video with ID: {}", id);
-        Video video = videoRepository.findById(id)
-                .orElseThrow(() -> {
-                    logger.error("Video with ID: {} not found for update", id);
-                    return new VideoNotFoundException("Video not found");
-                });
+    public Video updateMetadata(Long id, Video updatedVideo) {
+        Video video = videoRepository.findByIdAndActiveTrue(id)
+                .orElseThrow(() -> new VideoNotFoundException("Active video not found"));
 
         video.setTitle(updatedVideo.getTitle());
         video.setDirector(updatedVideo.getDirector());
         video.setGenre(updatedVideo.getGenre());
         video.setYear(updatedVideo.getYear());
-        logger.debug("Updating fields for video ID: {}", id);
-        Video savedVideo = videoRepository.save(video);
-        logger.info("Video with ID: {} updated successfully", id);
-        return savedVideo;
+
+        return videoRepository.save(video);
     }
 }

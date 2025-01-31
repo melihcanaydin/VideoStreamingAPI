@@ -5,6 +5,7 @@ import com.example.videostreamingapi.model.Video;
 import com.example.videostreamingapi.model.VideoEngagement;
 import com.example.videostreamingapi.repository.VideoEngagementRepository;
 import com.example.videostreamingapi.repository.VideoRepository;
+
 import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 
@@ -20,11 +21,12 @@ public class VideoEngagementService {
 
     @Transactional
     public void incrementViewCount(Long videoId) {
-        Video video = videoRepository.findById(videoId)
-                .orElseThrow(() -> new VideoNotFoundException("Video not found"));
-
         VideoEngagement engagement = engagementRepository.findByVideoId(videoId)
                 .orElseGet(() -> {
+                    Video video = videoRepository.findByIdAndActiveTrue(videoId)
+                            .orElseThrow(
+                                    () -> new VideoNotFoundException("Active video not found with ID: " + videoId));
+
                     VideoEngagement newEngagement = new VideoEngagement();
                     newEngagement.setVideo(video);
                     return newEngagement;
@@ -35,18 +37,19 @@ public class VideoEngagementService {
     }
 
     @Transactional
-    public void incrementLikeCount(Long videoId) {
-        Video video = videoRepository.findById(videoId)
-                .orElseThrow(() -> new VideoNotFoundException("Video not found"));
-
+    public void incrementImpressionCount(Long videoId) {
         VideoEngagement engagement = engagementRepository.findByVideoId(videoId)
                 .orElseGet(() -> {
+                    Video video = videoRepository.findByIdAndActiveTrue(videoId)
+                            .orElseThrow(
+                                    () -> new VideoNotFoundException("Active video not found with ID: " + videoId));
+
                     VideoEngagement newEngagement = new VideoEngagement();
                     newEngagement.setVideo(video);
                     return newEngagement;
                 });
 
-        engagement.incrementLikes();
+        engagement.incrementImpressions();
         engagementRepository.save(engagement);
     }
 
