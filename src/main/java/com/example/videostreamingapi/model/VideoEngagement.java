@@ -17,13 +17,13 @@ public class VideoEngagement {
     private Video video;
 
     private int views = 0;
-    private int likes = 0;
+    private int impressions = 0;
 
     public void incrementViews() {
         this.views++;
     }
 
-    public void incrementLikes() {
-        this.likes++;
+    public void incrementImpressions() {
+        this.impressions++;
     }
 }

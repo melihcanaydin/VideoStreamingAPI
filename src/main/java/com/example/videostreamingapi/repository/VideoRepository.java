@@ -6,11 +6,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface VideoRepository extends JpaRepository<Video, Long> {
     List<Video> findAllByActiveTrue();
 
+    Optional<Video> findByIdAndActiveTrue(Long id);
+
     @Query("SELECT v FROM Video v WHERE v.active = true AND " +
-           "(v.title LIKE %:query% OR v.director LIKE %:query%)")
+            "(LOWER(v.title) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+            "LOWER(v.director) LIKE LOWER(CONCAT('%', :query, '%')))")
     List<Video> searchVideos(@Param("query") String query);
 }
