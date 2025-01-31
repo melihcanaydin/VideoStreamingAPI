@@ -3,6 +3,7 @@ package com.example.videostreamingapi.repository;
 import com.example.videostreamingapi.model.Video;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestPropertySource("classpath:application-test.yml")
 public class VideoRepositoryTest {
+
     @Container
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15.1")
             .withDatabaseName("testdb")
@@ -39,15 +41,33 @@ public class VideoRepositoryTest {
     @Autowired
     private VideoRepository videoRepository;
 
+    @BeforeEach
+    void cleanDatabase() {
+        videoRepository.deleteAll();
+    }
+
     @Test
     void whenSaveVideo_ThenFindById() {
         Video video = new Video();
         video.setTitle("Database Test Video");
+        video.setActive(true);
 
         Video savedVideo = videoRepository.save(video);
-        Optional<Video> foundVideo = videoRepository.findById(savedVideo.getId());
+        Optional<Video> foundVideo = videoRepository.findByIdAndActiveTrue(savedVideo.getId());
 
         assertTrue(foundVideo.isPresent());
         assertEquals("Database Test Video", foundVideo.get().getTitle());
+    }
+
+    @Test
+    void whenVideoIsInactive_ThenFindByIdShouldReturnEmpty() {
+        Video video = new Video();
+        video.setTitle("Inactive Video");
+        video.setActive(false);
+
+        Video savedVideo = videoRepository.save(video);
+        Optional<Video> foundVideo = videoRepository.findByIdAndActiveTrue(savedVideo.getId());
+
+        assertFalse(foundVideo.isPresent());
     }
 }

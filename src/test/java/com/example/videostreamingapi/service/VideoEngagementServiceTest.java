@@ -1,5 +1,6 @@
 package com.example.videostreamingapi.service;
 
+import com.example.videostreamingapi.exception.VideoNotFoundException;
 import com.example.videostreamingapi.model.Video;
 import com.example.videostreamingapi.model.VideoEngagement;
 import com.example.videostreamingapi.repository.VideoEngagementRepository;
@@ -10,7 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import java.util.Optional;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class VideoEngagementServiceTest {
@@ -33,11 +34,13 @@ class VideoEngagementServiceTest {
     void whenIncrementViewCount_ThenViewCountUpdates() {
         Video video = new Video();
         video.setId(1L);
+        video.setActive(true);
+
         VideoEngagement engagement = new VideoEngagement();
         engagement.setVideo(video);
         engagement.setViews(5);
 
-        when(videoRepository.findById(1L)).thenReturn(Optional.of(video));
+        when(videoRepository.findByIdAndActiveTrue(1L)).thenReturn(Optional.of(video));
         when(engagementRepository.findByVideoId(1L)).thenReturn(Optional.of(engagement));
 
         engagementService.incrementViewCount(1L);
@@ -47,19 +50,63 @@ class VideoEngagementServiceTest {
     }
 
     @Test
-    void whenIncrementLikeCount_ThenLikeCountUpdates() {
+    void whenIncrementViewCount_AndNoExistingEngagement_ThenCreateNewEngagement() {
         Video video = new Video();
         video.setId(1L);
+        video.setActive(true);
+
+        when(videoRepository.findByIdAndActiveTrue(1L)).thenReturn(Optional.of(video));
+        when(engagementRepository.findByVideoId(1L)).thenReturn(Optional.empty());
+
+        engagementService.incrementViewCount(1L);
+
+        verify(engagementRepository, times(1)).save(any(VideoEngagement.class));
+    }
+
+    @Test
+    void whenIncrementViewCount_AndVideoNotFound_ThenThrowException() {
+        when(videoRepository.findByIdAndActiveTrue(1L)).thenReturn(Optional.empty());
+
+        assertThrows(VideoNotFoundException.class, () -> engagementService.incrementViewCount(1L));
+    }
+
+    @Test
+    void whenIncrementImpressionCount_ThenImpressionCountUpdates() {
+        Video video = new Video();
+        video.setId(1L);
+        video.setActive(true);
+
         VideoEngagement engagement = new VideoEngagement();
         engagement.setVideo(video);
-        engagement.setLikes(2);
+        engagement.setImpressions(3);
 
-        when(videoRepository.findById(1L)).thenReturn(Optional.of(video));
+        when(videoRepository.findByIdAndActiveTrue(1L)).thenReturn(Optional.of(video));
         when(engagementRepository.findByVideoId(1L)).thenReturn(Optional.of(engagement));
 
-        engagementService.incrementLikeCount(1L);
+        engagementService.incrementImpressionCount(1L);
 
-        assertEquals(3, engagement.getLikes());
+        assertEquals(4, engagement.getImpressions());
         verify(engagementRepository, times(1)).save(engagement);
+    }
+
+    @Test
+    void whenIncrementImpressionCount_AndNoExistingEngagement_ThenCreateNewEngagement() {
+        Video video = new Video();
+        video.setId(1L);
+        video.setActive(true);
+
+        when(videoRepository.findByIdAndActiveTrue(1L)).thenReturn(Optional.of(video));
+        when(engagementRepository.findByVideoId(1L)).thenReturn(Optional.empty());
+
+        engagementService.incrementImpressionCount(1L);
+
+        verify(engagementRepository, times(1)).save(any(VideoEngagement.class));
+    }
+
+    @Test
+    void whenIncrementImpressionCount_AndVideoNotFound_ThenThrowException() {
+        when(videoRepository.findByIdAndActiveTrue(1L)).thenReturn(Optional.empty());
+
+        assertThrows(VideoNotFoundException.class, () -> engagementService.incrementImpressionCount(1L));
     }
 }
