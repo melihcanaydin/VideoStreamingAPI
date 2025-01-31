@@ -2,8 +2,10 @@ package com.example.videostreamingapi.controller;
 
 import com.example.videostreamingapi.model.Video;
 import com.example.videostreamingapi.service.VideoService;
+import com.example.videostreamingapi.service.VideoEngagementService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,34 +14,45 @@ import java.util.List;
 @RequestMapping("/videos")
 public class VideoController {
     private static final Logger logger = LoggerFactory.getLogger(VideoController.class);
-
     private final VideoService videoService;
+    private final VideoEngagementService engagementService;
 
-    public VideoController(VideoService videoService) {
+    public VideoController(VideoService videoService, VideoEngagementService engagementService) {
         this.videoService = videoService;
+        this.engagementService = engagementService;
     }
 
-    @GetMapping
-    public List<Video> getVideos() {
-        logger.info("GET /videos - Fetching all videos");
-        return videoService.getAllVideos();
+    @GetMapping("/list")
+    public List<Video> listVideos() {
+        return videoService.listVideos();
     }
 
     @PostMapping
-    public Video createVideo(@RequestBody Video video) {
-        logger.info("POST /videos - Creating a new video");
-        return videoService.createVideo(video);
+    public Video publishVideo(@RequestBody Video video) {
+        return videoService.publishVideo(video);
+    }
+
+    @GetMapping("/{id}")
+    public Video loadVideo(@PathVariable Long id) {
+        Video video = videoService.getVideoById(id);
+
+        engagementService.incrementImpressionCount(id);
+        return video;
+    }
+
+    @PostMapping("/{id}/play")
+    public ResponseEntity<String> playVideo(@PathVariable Long id) {
+        String response = videoService.playVideo(id);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteVideo(@PathVariable Long id) {
-        logger.info("DELETE /videos/{} - Deleting a video", id);
-        videoService.deleteVideo(id);
+    public void delistVideo(@PathVariable Long id) {
+        videoService.delistVideo(id);
     }
 
-    @PutMapping("/{id}")
-    public Video updateVideo(@PathVariable Long id, @RequestBody Video video) {
-        logger.info("PUT /videos/{} - Updating a video", id);
-        return videoService.updateVideo(id, video);
+    @PutMapping("/{id}/metadata")
+    public Video updateMetadata(@PathVariable Long id, @RequestBody Video video) {
+        return videoService.updateMetadata(id, video);
     }
 }

@@ -5,7 +5,7 @@ import com.example.videostreamingapi.service.VideoEngagementService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/videos/engagement")
+@RequestMapping
 public class VideoEngagementController {
 
     private final VideoEngagementService engagementService;
@@ -14,18 +14,9 @@ public class VideoEngagementController {
         this.engagementService = engagementService;
     }
 
-    @PostMapping("/{videoId}/view")
-    public void addView(@PathVariable Long videoId) {
-        engagementService.incrementViewCount(videoId);
-    }
-
-    @PostMapping("/{videoId}/like")
-    public void addLike(@PathVariable Long videoId) {
-        engagementService.incrementLikeCount(videoId);
-    }
-
-    @GetMapping("/{videoId}")
-    public VideoEngagement getEngagementStats(@PathVariable Long videoId) {
-        return engagementService.getEngagementStats(videoId);
+    @GetMapping("/videos/{videoId}/engagement")
+    public String getEngagementStats(@PathVariable Long videoId) {
+        VideoEngagement engagement = engagementService.getEngagementStats(videoId);
+        return "Views: " + engagement.getViews() + ", Impressions: " + engagement.getImpressions();
     }
 }
