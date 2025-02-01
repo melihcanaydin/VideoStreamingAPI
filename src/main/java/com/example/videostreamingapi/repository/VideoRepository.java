@@ -13,6 +13,8 @@ public interface VideoRepository extends JpaRepository<Video, Long> {
 
     Optional<Video> findByIdAndActiveTrue(Long id);
 
+    Optional<Video> findByTitleAndDirector(String title, String director);
+
     @Query("SELECT v FROM Video v WHERE v.active = true AND " +
             "(LOWER(v.title) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
             "LOWER(v.director) LIKE LOWER(CONCAT('%', :query, '%')))")

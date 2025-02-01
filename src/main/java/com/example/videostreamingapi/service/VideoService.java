@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class VideoService {
@@ -27,11 +28,18 @@ public class VideoService {
     }
 
     public Video publishVideo(Video video) {
-        logger.info("Publishing new video: {}", video.getTitle());
-        video.setActive(true);
-        Video savedVideo = videoRepository.save(video);
-        logger.info("Video published successfully with ID: {}", savedVideo.getId());
-        return savedVideo;
+        logger.info("Attempting to publish video: {} by {}", video.getTitle(), video.getDirector());
+
+        return findExistingVideo(video.getTitle(), video.getDirector())
+                .map(existingVideo -> {
+                    if (!existingVideo.isActive()) {
+                        return reactivateVideo(existingVideo);
+                    }
+                    logger.warn("The video {} from {} is already published!", video.getTitle(), video.getDirector());
+                    throw new IllegalStateException("The video " + video.getTitle() + " from " + video.getDirector()
+                            + " is already published!");
+                })
+                .orElseGet(() -> saveNewVideo(video));
     }
 
     public Video getVideoById(Long id) {
@@ -84,5 +92,31 @@ public class VideoService {
         Video updated = videoRepository.save(video);
         logger.info("Metadata updated successfully for video ID: {}", id);
         return updated;
+    }
+
+    /**
+     * Checks if a video with the same title and director exists.
+     */
+    private Optional<Video> findExistingVideo(String title, String director) {
+        return videoRepository.findByTitleAndDirector(title, director);
+    }
+
+    /**
+     * Saves a new video to the database.
+     */
+    private Video saveNewVideo(Video video) {
+        video.setActive(true);
+        Video savedVideo = videoRepository.save(video);
+        logger.info("Video published successfully with ID: {}", savedVideo.getId());
+        return savedVideo;
+    }
+
+    /**
+     * Reactivates an inactive video.
+     */
+    private Video reactivateVideo(Video video) {
+        logger.info("Reactivating previously delisted video: {} by {}", video.getTitle(), video.getDirector());
+        video.setActive(true);
+        return videoRepository.save(video);
     }
 }
