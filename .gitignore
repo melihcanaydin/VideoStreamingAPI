@@ -27,7 +27,6 @@ logback.xml
 # Environment and configuration files
 .env
 *.properties
-*.yml
 !src/main/resources/application.yml
 !src/main/resources/application-dev.yml
 !src/main/resources/application-prod.yml
@@ -36,10 +35,6 @@ logback.xml
 *.key
 *.pem
 *.crt
-
-# Docker-related files
-docker-compose.override.yml
-docker-compose.override.yaml
 
 # Ignore Maven wrapper files except needed ones
 mvnw.cmd
