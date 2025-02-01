@@ -1,28 +1,34 @@
 {
 	"info": {
-		"_postman_id": "123e4567-e89b-12d3-a456-426614174000",
+		"_postman_id": "195c7a01-927a-4dd1-a55d-051149baeeff",
 		"name": "Video Streaming API",
 		"description": "API endpoints for managing videos, metadata, and engagement metrics.",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "7978033"
 	},
 	"item": [
 		{
-			"name": "GET /videos",
+			"name": "ListAllAvailableVideos",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/videos",
+					"raw": "http://localhost:8080/videos/list",
 					"protocol": "http",
-					"host": ["localhost"],
+					"host": [
+						"localhost"
+					],
 					"port": "8080",
-					"path": ["videos"]
+					"path": [
+						"videos",
+						"list"
+					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "POST /videos",
+			"name": "PublishVideo",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -31,127 +37,176 @@
 						"value": "application/json"
 					}
 				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"title\": \"Inception\",\n  \"director\": \"Christopher Nolan\",\n  \"genre\": \"Sci-Fi\",\n  \"year\": 2010,\n  \"runningTime\": 148\n}"
+				},
 				"url": {
 					"raw": "http://localhost:8080/videos",
 					"protocol": "http",
-					"host": ["localhost"],
+					"host": [
+						"localhost"
+					],
 					"port": "8080",
-					"path": ["videos"]
-				},
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"title\": \"Inception\",\n  \"director\": \"Christopher Nolan\",\n  \"genre\": \"Sci-Fi\",\n  \"year\": 2010\n}"
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "GET /videos/search",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/videos/search?query=Inception",
-					"protocol": "http",
-					"host": ["localhost"],
-					"port": "8080",
-					"path": ["videos", "search"],
-					"query": [
-						{
-							"key": "query",
-							"value": "Inception"
-						}
+					"path": [
+						"videos"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "DELETE /videos/{id}",
+			"name": "LoadVideo",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/videos/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"videos",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DelistVideo",
 			"request": {
 				"method": "DELETE",
 				"header": [],
 				"url": {
 					"raw": "http://localhost:8080/videos/1",
 					"protocol": "http",
-					"host": ["localhost"],
+					"host": [
+						"localhost"
+					],
 					"port": "8080",
-					"path": ["videos", "1"]
+					"path": [
+						"videos",
+						"1"
+					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "GET /videos/{id}/load",
+			"name": "PlayVideo",
 			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/videos/1/load",
-					"protocol": "http",
-					"host": ["localhost"],
-					"port": "8080",
-					"path": ["videos", "1", "load"]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "GET /videos/{id}/play",
-			"request": {
-				"method": "GET",
+				"method": "POST",
 				"header": [],
 				"url": {
 					"raw": "http://localhost:8080/videos/1/play",
 					"protocol": "http",
-					"host": ["localhost"],
+					"host": [
+						"localhost"
+					],
 					"port": "8080",
-					"path": ["videos", "1", "play"]
+					"path": [
+						"videos",
+						"1",
+						"play"
+					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "POST /videos/engagement/{id}/view",
+			"name": "EditVideoMetadata",
 			"request": {
-				"method": "POST",
-				"header": [],
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"title\": \"Updated Title\",\n  \"director\": \"Updated Director\",\n  \"genre\": \"Updated Genre\",\n  \"year\": 2025,\n  \"runningTime\": 120\n}"
+				},
 				"url": {
-					"raw": "http://localhost:8080/videos/engagement/1/view",
+					"raw": "http://localhost:8080/videos/1/metadata",
 					"protocol": "http",
-					"host": ["localhost"],
+					"host": [
+						"localhost"
+					],
 					"port": "8080",
-					"path": ["videos", "engagement", "1", "view"]
+					"path": [
+						"videos",
+						"1",
+						"metadata"
+					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "POST /videos/engagement/{id}/like",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/videos/engagement/1/like",
-					"protocol": "http",
-					"host": ["localhost"],
-					"port": "8080",
-					"path": ["videos", "engagement", "1", "like"]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "GET /videos/engagement/{id}",
+			"name": "GetEngagementStatistic",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/videos/engagement/1",
+					"raw": "http://localhost:8080/videos/1/engagement",
 					"protocol": "http",
-					"host": ["localhost"],
+					"host": [
+						"localhost"
+					],
 					"port": "8080",
-					"path": ["videos", "engagement", "1"]
+					"path": [
+						"videos",
+						"1",
+						"engagement"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "IncrementView",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/videos/1/engagement/view",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"videos",
+						"1",
+						"engagement",
+						"view"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "IncrementLike",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/videos/1/engagement/impression",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"videos",
+						"1",
+						"engagement",
+						"impression"
+					]
 				}
 			},
 			"response": []
