@@ -3,8 +3,6 @@ package com.example.videostreamingapi.controller;
 import com.example.videostreamingapi.model.Video;
 import com.example.videostreamingapi.service.VideoService;
 import com.example.videostreamingapi.service.VideoEngagementService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +11,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/videos")
 public class VideoController {
-    private static final Logger logger = LoggerFactory.getLogger(VideoController.class);
     private final VideoService videoService;
     private final VideoEngagementService engagementService;
 
@@ -43,6 +40,8 @@ public class VideoController {
     @PostMapping("/{id}/play")
     public ResponseEntity<String> playVideo(@PathVariable Long id) {
         String response = videoService.playVideo(id);
+
+        engagementService.incrementViewCount(id);
         return ResponseEntity.ok(response);
     }
 
