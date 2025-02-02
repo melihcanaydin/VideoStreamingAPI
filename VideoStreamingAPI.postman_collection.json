@@ -1,215 +1,144 @@
 {
-	"info": {
-		"_postman_id": "195c7a01-927a-4dd1-a55d-051149baeeff",
-		"name": "Video Streaming API",
-		"description": "API endpoints for managing videos, metadata, and engagement metrics.",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "7978033"
-	},
-	"item": [
-		{
-			"name": "ListAllAvailableVideos",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/videos/list",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"videos",
-						"list"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "PublishVideo",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"title\": \"Inception\",\n  \"director\": \"Christopher Nolan\",\n  \"genre\": \"Sci-Fi\",\n  \"year\": 2010,\n  \"runningTime\": 148\n}"
-				},
-				"url": {
-					"raw": "http://localhost:8080/videos",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"videos"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "LoadVideo",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/videos/1",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"videos",
-						"1"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "DelistVideo",
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/videos/1",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"videos",
-						"1"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "PlayVideo",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/videos/1/play",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"videos",
-						"1",
-						"play"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "EditVideoMetadata",
-			"request": {
-				"method": "PUT",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"title\": \"Updated Title\",\n  \"director\": \"Updated Director\",\n  \"genre\": \"Updated Genre\",\n  \"year\": 2025,\n  \"runningTime\": 120\n}"
-				},
-				"url": {
-					"raw": "http://localhost:8080/videos/1/metadata",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"videos",
-						"1",
-						"metadata"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "GetEngagementStatistic",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/videos/1/engagement",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"videos",
-						"1",
-						"engagement"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "IncrementView",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/videos/1/engagement/view",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"videos",
-						"1",
-						"engagement",
-						"view"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "IncrementLike",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/videos/1/engagement/impression",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"videos",
-						"1",
-						"engagement",
-						"impression"
-					]
-				}
-			},
-			"response": []
-		}
-	]
+  "info": {
+    "name": "Video Streaming API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get All Videos (Paginated)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/videos/list?page=0&size=5&sort=title,asc",
+          "host": ["localhost:8080"],
+          "path": ["videos", "list"],
+          "query": [
+            { "key": "page", "value": "0" },
+            { "key": "size", "value": "5" },
+            { "key": "sort", "value": "title,asc" }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Search Videos",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/videos/search?query=inception&page=0&size=5&sort=title,asc",
+          "host": ["localhost:8080"],
+          "path": ["videos", "search"],
+          "query": [
+            { "key": "query", "value": "inception" },
+            { "key": "page", "value": "0" },
+            { "key": "size", "value": "5" },
+            { "key": "sort", "value": "title,asc" }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create Video",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"title\": \"Inception\",\n    \"director\": \"Christopher Nolan\",\n    \"mainActor\": \"Leonardo DiCaprio\",\n    \"genre\": \"Sci-Fi\",\n    \"runningTime\": 148\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/videos",
+          "host": ["localhost:8080"],
+          "path": ["videos"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Video by ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/videos/1",
+          "host": ["localhost:8080"],
+          "path": ["videos", "1"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Video Metadata",
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"title\": \"Inception - Updated\",\n    \"director\": \"Christopher Nolan\",\n    \"mainActor\": \"Leonardo DiCaprio\",\n    \"genre\": \"Sci-Fi\",\n    \"runningTime\": 150\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/videos/1/metadata",
+          "host": ["localhost:8080"],
+          "path": ["videos", "1", "metadata"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Video",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/videos/1",
+          "host": ["localhost:8080"],
+          "path": ["videos", "1"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Video Engagement",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/videos/1/engagement",
+          "host": ["localhost:8080"],
+          "path": ["videos", "1", "engagement"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Increment Video View",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/videos/1/engagement/view",
+          "host": ["localhost:8080"],
+          "path": ["videos", "1", "engagement", "view"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Increment Video Impression",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/videos/1/engagement/impression",
+          "host": ["localhost:8080"],
+          "path": ["videos", "1", "engagement", "impression"]
+        }
+      },
+      "response": []
+    }
+  ]
 }
