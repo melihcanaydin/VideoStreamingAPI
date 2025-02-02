@@ -6,6 +6,8 @@ import com.example.videostreamingapi.service.VideoEngagementService;
 import com.example.videostreamingapi.service.VideoService;
 import jakarta.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/videos")
 public class VideoController {
+    private static final Logger logger = LoggerFactory.getLogger(VideoController.class);
+
     private final VideoService videoService;
     private final VideoEngagementService engagementService;
 
@@ -45,18 +49,13 @@ public class VideoController {
     @GetMapping(value = "/{id:[0-9]+}")
     public ResponseEntity<VideoResponse> getVideoById(@PathVariable Long id) {
         VideoResponse video = videoService.getVideoById(id);
-        if (video == null) {
-            return ResponseEntity.notFound().build();
-        }
-        engagementService.incrementImpressionCount(id);
         return ResponseEntity.ok(video);
     }
 
-    @PostMapping("/{id}/play")
-    public ResponseEntity<String> playVideo(@PathVariable Long id) {
-        String response = videoService.playVideo(id);
-        engagementService.incrementViewCount(id);
-        return ResponseEntity.ok(response);
+    @GetMapping("/{videoId}/play")
+    public ResponseEntity<String> playVideo(@PathVariable Long videoId) {
+        logger.info("Received request to play video with ID: {}", videoId);
+        return ResponseEntity.ok(videoService.playVideo(videoId));
     }
 
     @DeleteMapping("/{id}")

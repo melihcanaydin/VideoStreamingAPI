@@ -1,5 +1,6 @@
 package com.example.videostreamingapi.entity;
 
+import com.example.videostreamingapi.dto.request.VideoRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,4 +20,33 @@ public class Video {
     private String genre;
     private int runningTime;
     private boolean active = true;
+
+    public Video() {
+    }
+
+    public Video(VideoRequest videoRequest) {
+        this.title = videoRequest.getTitle();
+        this.director = videoRequest.getDirector();
+        this.mainActor = videoRequest.getMainActor();
+        this.genre = videoRequest.getGenre();
+        this.runningTime = videoRequest.getRunningTime();
+        this.active = true;
+    }
+
+    public Video(String title, String director, String mainActor, String genre, int runningTime) {
+        this.title = title;
+        this.director = director;
+        this.mainActor = mainActor;
+        this.genre = genre;
+        this.runningTime = runningTime;
+        this.active = true;
+    }
+
+    public void updateMetadata(VideoRequest request) {
+        this.title = request.getTitle();
+        this.director = request.getDirector();
+        this.mainActor = request.getMainActor();
+        this.genre = request.getGenre();
+        this.runningTime = request.getRunningTime();
+    }
 }

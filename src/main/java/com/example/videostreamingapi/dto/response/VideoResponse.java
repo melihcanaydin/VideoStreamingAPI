@@ -12,4 +12,16 @@ public class VideoResponse {
     private String mainActor;
     private String genre;
     private int runningTime;
+
+    public VideoResponse(Long id, String title, String director, String mainActor, String genre, int runningTime) {
+        this.id = id;
+        this.title = title;
+        this.director = director;
+        this.mainActor = mainActor;
+        this.genre = genre;
+        this.runningTime = runningTime;
+    }
+
+    public VideoResponse() {
+    }
 }

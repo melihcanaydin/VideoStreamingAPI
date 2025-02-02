@@ -9,7 +9,7 @@ import com.example.videostreamingapi.repository.VideoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class VideoEngagementService {
@@ -24,22 +24,13 @@ public class VideoEngagementService {
     }
 
     @Transactional
-    public void incrementViewCount(Long videoId) {
-        logger.info("Incrementing view count for video ID: {}", videoId);
-        VideoEngagement engagement = findOrCreateEngagement(videoId);
-        engagement.incrementViews();
-        engagementRepository.save(engagement);
-        logger.info("View count updated for video ID: {}. New views: {}", videoId, engagement.getViews());
+    public void recordView(Long videoId) {
+        updateEngagementStats(videoId, true);
     }
 
     @Transactional
-    public void incrementImpressionCount(Long videoId) {
-        logger.info("Incrementing impression count for video ID: {}", videoId);
-        VideoEngagement engagement = findOrCreateEngagement(videoId);
-        engagement.incrementImpressions();
-        engagementRepository.save(engagement);
-        logger.info("Impression count updated for video ID: {}. New impressions: {}", videoId,
-                engagement.getImpressions());
+    public void recordImpression(Long videoId) {
+        updateEngagementStats(videoId, false);
     }
 
     public VideoEngagementResponse getEngagementStats(Long videoId) {
@@ -50,16 +41,33 @@ public class VideoEngagementService {
         return new VideoEngagementResponse(videoId, engagement.getViews(), engagement.getImpressions());
     }
 
+    @Transactional
+    private void updateEngagementStats(Long videoId, boolean isView) {
+        VideoEngagement engagement = findOrCreateEngagement(videoId);
+
+        if (isView) {
+            engagement.setViews(engagement.getViews() + 1);
+            logger.info("Updated view count for video ID: {}. Total views: {}", videoId, engagement.getViews());
+        } else {
+            engagement.setImpressions(engagement.getImpressions() + 1);
+            logger.info("Updated impression count for video ID: {}. Total impressions: {}", videoId,
+                    engagement.getImpressions());
+        }
+
+        engagementRepository.save(engagement);
+    }
+
     private VideoEngagement findOrCreateEngagement(Long videoId) {
         return engagementRepository.findByVideoId(videoId)
-                .orElseGet(() -> {
-                    Video video = videoRepository.findByIdAndActiveTrue(videoId)
-                            .orElseThrow(
-                                    () -> new VideoNotFoundException("Active video not found with ID: " + videoId));
+                .orElseGet(() -> createNewEngagement(videoId));
+    }
 
-                    VideoEngagement newEngagement = new VideoEngagement();
-                    newEngagement.setVideo(video);
-                    return engagementRepository.save(newEngagement);
-                });
+    private VideoEngagement createNewEngagement(Long videoId) {
+        Video video = videoRepository.findByIdAndActiveTrue(videoId)
+                .orElseThrow(() -> new VideoNotFoundException("Active video not found with ID: " + videoId));
+
+        VideoEngagement newEngagement = new VideoEngagement();
+        newEngagement.setVideo(video);
+        return engagementRepository.save(newEngagement);
     }
 }

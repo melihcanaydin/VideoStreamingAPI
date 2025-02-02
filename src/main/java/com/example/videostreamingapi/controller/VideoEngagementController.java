@@ -20,16 +20,4 @@ public class VideoEngagementController {
         VideoEngagementResponse engagement = engagementService.getEngagementStats(videoId);
         return ResponseEntity.ok(engagement);
     }
-
-    @PostMapping("/view")
-    public ResponseEntity<Void> incrementViews(@PathVariable Long videoId) {
-        engagementService.incrementViewCount(videoId);
-        return ResponseEntity.noContent().build();
-    }
-
-    @PostMapping("/impression")
-    public ResponseEntity<Void> incrementImpressions(@PathVariable Long videoId) {
-        engagementService.incrementImpressionCount(videoId);
-        return ResponseEntity.noContent().build();
-    }
 }
