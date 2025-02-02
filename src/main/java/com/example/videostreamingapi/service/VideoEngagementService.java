@@ -1,8 +1,9 @@
 package com.example.videostreamingapi.service;
 
+import com.example.videostreamingapi.dto.response.VideoEngagementResponse;
+import com.example.videostreamingapi.entity.Video;
+import com.example.videostreamingapi.entity.VideoEngagement;
 import com.example.videostreamingapi.exception.VideoNotFoundException;
-import com.example.videostreamingapi.model.Video;
-import com.example.videostreamingapi.model.VideoEngagement;
 import com.example.videostreamingapi.repository.VideoEngagementRepository;
 import com.example.videostreamingapi.repository.VideoRepository;
 import org.slf4j.Logger;
@@ -25,63 +26,40 @@ public class VideoEngagementService {
     @Transactional
     public void incrementViewCount(Long videoId) {
         logger.info("Incrementing view count for video ID: {}", videoId);
-
-        VideoEngagement engagement = engagementRepository.findByVideoId(videoId)
-                .orElseGet(() -> {
-                    logger.warn("Engagement data not found for video ID: {}, initializing new entry.", videoId);
-                    Video video = videoRepository.findByIdAndActiveTrue(videoId)
-                            .orElseThrow(() -> {
-                                logger.error("Active video not found with ID: {}", videoId);
-                                return new VideoNotFoundException("Active video not found with ID: " + videoId);
-                            });
-
-                    VideoEngagement newEngagement = new VideoEngagement();
-                    newEngagement.setVideo(video);
-                    return newEngagement;
-                });
-
+        VideoEngagement engagement = findOrCreateEngagement(videoId);
         engagement.incrementViews();
         engagementRepository.save(engagement);
-
-        logger.info("Successfully updated view count for video ID: {}. New views: {}", videoId, engagement.getViews());
+        logger.info("View count updated for video ID: {}. New views: {}", videoId, engagement.getViews());
     }
 
     @Transactional
     public void incrementImpressionCount(Long videoId) {
         logger.info("Incrementing impression count for video ID: {}", videoId);
-
-        VideoEngagement engagement = engagementRepository.findByVideoId(videoId)
-                .orElseGet(() -> {
-                    logger.warn("Engagement data not found for video ID: {}, initializing new entry.", videoId);
-                    Video video = videoRepository.findByIdAndActiveTrue(videoId)
-                            .orElseThrow(() -> {
-                                logger.error("Active video not found with ID: {}", videoId);
-                                return new VideoNotFoundException("Active video not found with ID: " + videoId);
-                            });
-
-                    VideoEngagement newEngagement = new VideoEngagement();
-                    newEngagement.setVideo(video);
-                    return newEngagement;
-                });
-
+        VideoEngagement engagement = findOrCreateEngagement(videoId);
         engagement.incrementImpressions();
         engagementRepository.save(engagement);
-
-        logger.info("Successfully updated impression count for video ID: {}. New impressions: {}", videoId,
+        logger.info("Impression count updated for video ID: {}. New impressions: {}", videoId,
                 engagement.getImpressions());
     }
 
-    public VideoEngagement getEngagementStats(Long videoId) {
+    public VideoEngagementResponse getEngagementStats(Long videoId) {
         logger.info("Fetching engagement stats for video ID: {}", videoId);
-
         VideoEngagement engagement = engagementRepository.findByVideoId(videoId)
-                .orElseThrow(() -> {
-                    logger.warn("No engagement data found for video ID: {}", videoId);
-                    return new VideoNotFoundException("No engagement data found for this video");
-                });
+                .orElseThrow(() -> new VideoNotFoundException("No engagement data found for video ID: " + videoId));
 
-        logger.info("Engagement stats retrieved for video ID: {}. Views: {}, Impressions: {}", videoId,
-                engagement.getViews(), engagement.getImpressions());
-        return engagement;
+        return new VideoEngagementResponse(videoId, engagement.getViews(), engagement.getImpressions());
+    }
+
+    private VideoEngagement findOrCreateEngagement(Long videoId) {
+        return engagementRepository.findByVideoId(videoId)
+                .orElseGet(() -> {
+                    Video video = videoRepository.findByIdAndActiveTrue(videoId)
+                            .orElseThrow(
+                                    () -> new VideoNotFoundException("Active video not found with ID: " + videoId));
+
+                    VideoEngagement newEngagement = new VideoEngagement();
+                    newEngagement.setVideo(video);
+                    return engagementRepository.save(newEngagement);
+                });
     }
 }

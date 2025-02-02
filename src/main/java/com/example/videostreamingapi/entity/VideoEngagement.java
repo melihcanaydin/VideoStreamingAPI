@@ -1,4 +1,4 @@
-package com.example.videostreamingapi.model;
+package com.example.videostreamingapi.entity;
 
 import lombok.Data;
 import jakarta.persistence.*;

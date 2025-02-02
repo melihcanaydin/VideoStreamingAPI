@@ -1,12 +1,17 @@
 package com.example.videostreamingapi.controller;
 
-import com.example.videostreamingapi.model.Video;
-import com.example.videostreamingapi.service.VideoService;
+import com.example.videostreamingapi.dto.request.VideoRequest;
+import com.example.videostreamingapi.dto.response.VideoResponse;
 import com.example.videostreamingapi.service.VideoEngagementService;
+import com.example.videostreamingapi.service.VideoService;
+import jakarta.validation.Valid;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/videos")
@@ -20,38 +25,50 @@ public class VideoController {
     }
 
     @GetMapping("/list")
-    public List<Video> listVideos() {
-        return videoService.listVideos();
+    public ResponseEntity<Page<VideoResponse>> getAllVideos(Pageable pageable) {
+        return ResponseEntity.ok(videoService.listVideos(pageable));
+    }
+
+    @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Page<VideoResponse>> searchVideos(
+            @RequestParam(name = "query") String query,
+            Pageable pageable) {
+        return ResponseEntity.ok(videoService.searchVideos(query, pageable));
     }
 
     @PostMapping
-    public Video publishVideo(@RequestBody Video video) {
-        return videoService.publishVideo(video);
+    public ResponseEntity<VideoResponse> createVideo(@Valid @RequestBody VideoRequest videoRequest) {
+        VideoResponse createdVideo = videoService.createVideo(videoRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdVideo);
     }
 
-    @GetMapping("/{id}")
-    public Video loadVideo(@PathVariable Long id) {
-        Video video = videoService.getVideoById(id);
-
+    @GetMapping(value = "/{id:[0-9]+}")
+    public ResponseEntity<VideoResponse> getVideoById(@PathVariable Long id) {
+        VideoResponse video = videoService.getVideoById(id);
+        if (video == null) {
+            return ResponseEntity.notFound().build();
+        }
         engagementService.incrementImpressionCount(id);
-        return video;
+        return ResponseEntity.ok(video);
     }
 
     @PostMapping("/{id}/play")
     public ResponseEntity<String> playVideo(@PathVariable Long id) {
         String response = videoService.playVideo(id);
-
         engagementService.incrementViewCount(id);
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
-    public void delistVideo(@PathVariable Long id) {
-        videoService.delistVideo(id);
+    public ResponseEntity<Void> deleteVideo(@PathVariable Long id) {
+        boolean deleted = videoService.delistVideo(id);
+        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 
     @PutMapping("/{id}/metadata")
-    public Video updateMetadata(@PathVariable Long id, @RequestBody Video video) {
-        return videoService.updateMetadata(id, video);
+    public ResponseEntity<VideoResponse> updateMetadata(@PathVariable Long id,
+            @Valid @RequestBody VideoRequest videoRequest) {
+        VideoResponse updatedVideo = videoService.updateMetadata(id, videoRequest);
+        return updatedVideo != null ? ResponseEntity.ok(updatedVideo) : ResponseEntity.notFound().build();
     }
 }

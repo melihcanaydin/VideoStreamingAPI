@@ -1,6 +1,6 @@
 package com.example.videostreamingapi.controller;
 
-import com.example.videostreamingapi.model.VideoEngagement;
+import com.example.videostreamingapi.dto.response.VideoEngagementResponse;
 import com.example.videostreamingapi.service.VideoEngagementService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,20 +16,20 @@ public class VideoEngagementController {
     }
 
     @GetMapping
-    public ResponseEntity<String> getEngagementStats(@PathVariable Long videoId) {
-        VideoEngagement engagement = engagementService.getEngagementStats(videoId);
-        return ResponseEntity.ok("Views: " + engagement.getViews() + ", Impressions: " + engagement.getImpressions());
+    public ResponseEntity<VideoEngagementResponse> getEngagementStats(@PathVariable Long videoId) {
+        VideoEngagementResponse engagement = engagementService.getEngagementStats(videoId);
+        return ResponseEntity.ok(engagement);
     }
 
     @PostMapping("/view")
-    public ResponseEntity<String> incrementViews(@PathVariable Long videoId) {
+    public ResponseEntity<Void> incrementViews(@PathVariable Long videoId) {
         engagementService.incrementViewCount(videoId);
-        return ResponseEntity.ok("View count incremented for video ID: " + videoId);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/impression")
-    public ResponseEntity<String> incrementImpressions(@PathVariable Long videoId) {
+    public ResponseEntity<Void> incrementImpressions(@PathVariable Long videoId) {
         engagementService.incrementImpressionCount(videoId);
-        return ResponseEntity.ok("Impression count incremented for video ID: " + videoId);
+        return ResponseEntity.noContent().build();
     }
 }
