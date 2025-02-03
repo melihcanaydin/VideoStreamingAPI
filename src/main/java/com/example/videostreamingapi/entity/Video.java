@@ -1,5 +1,8 @@
 package com.example.videostreamingapi.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.example.videostreamingapi.dto.request.VideoRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -49,4 +52,7 @@ public class Video {
         this.genre = request.getGenre();
         this.runningTime = request.getRunningTime();
     }
+
+    @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<VideoEngagement> engagements = new ArrayList<>();
 }
