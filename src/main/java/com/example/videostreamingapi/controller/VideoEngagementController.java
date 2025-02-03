@@ -21,8 +21,9 @@ public class VideoEngagementController {
         VideoEngagementResponse response = engagementService.getEngagementStats(videoId);
 
         if (response == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+
         return ResponseEntity.ok(response);
     }
 }

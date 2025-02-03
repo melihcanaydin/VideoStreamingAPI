@@ -29,6 +29,7 @@ class VideoControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @SuppressWarnings("removal")
     @MockBean
     private VideoService videoService;
 

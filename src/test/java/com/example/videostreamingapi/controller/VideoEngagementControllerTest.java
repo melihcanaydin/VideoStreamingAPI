@@ -23,6 +23,7 @@ class VideoEngagementControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @SuppressWarnings("removal")
     @MockBean
     private VideoEngagementService engagementService;
 
