@@ -43,18 +43,24 @@ public class VideoEngagementService {
 
     @Transactional
     private void updateEngagementStats(Long videoId, boolean isView) {
-        VideoEngagement engagement = findOrCreateEngagement(videoId);
+        int updatedRows = isView ? engagementRepository.incrementViewCount(videoId)
+                : engagementRepository.incrementImpressionCount(videoId);
 
-        if (isView) {
-            engagement.setViews(engagement.getViews() + 1);
-            logger.info("Updated view count for video ID: {}. Total views: {}", videoId, engagement.getViews());
-        } else {
-            engagement.setImpressions(engagement.getImpressions() + 1);
-            logger.info("Updated impression count for video ID: {}. Total impressions: {}", videoId,
-                    engagement.getImpressions());
+        if (updatedRows == 0) {
+            VideoEngagement engagement = findOrCreateEngagement(videoId);
+
+            if (isView) {
+                engagement.setViews(engagement.getViews() + 1);
+                logger.info("Created engagement and updated view count for video ID: {}. Total views: {}", videoId,
+                        engagement.getViews());
+            } else {
+                engagement.setImpressions(engagement.getImpressions() + 1);
+                logger.info("Created engagement and updated impression count for video ID: {}. Total impressions: {}",
+                        videoId, engagement.getImpressions());
+            }
+
+            engagementRepository.save(engagement);
         }
-
-        engagementRepository.save(engagement);
     }
 
     private VideoEngagement findOrCreateEngagement(Long videoId) {

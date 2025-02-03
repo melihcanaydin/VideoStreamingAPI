@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "524fe4d5-2deb-4b4d-b482-1536473f9395",
+		"_postman_id": "ee006424-0489-4381-a004-53ae3c7b524f",
 		"name": "Video Streaming API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "7978033"
@@ -161,6 +161,27 @@
 					"path": [
 						"videos",
 						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PlayVideo",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/videos/1/play",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"videos",
+						"1",
+						"play"
 					]
 				}
 			},

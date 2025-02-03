@@ -45,6 +45,7 @@ public class VideoService {
                 .orElseGet(() -> VideoMapper.toResponse(videoRepository.save(VideoMapper.toEntity(videoRequest))));
     }
 
+    @Transactional
     public VideoResponse getVideoById(Long id) {
         logger.info("Fetching video with ID: {}", id);
 

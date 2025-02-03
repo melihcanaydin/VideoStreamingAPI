@@ -2,7 +2,6 @@ package com.example.videostreamingapi.controller;
 
 import com.example.videostreamingapi.dto.request.VideoRequest;
 import com.example.videostreamingapi.dto.response.VideoResponse;
-import com.example.videostreamingapi.service.VideoEngagementService;
 import com.example.videostreamingapi.service.VideoService;
 import jakarta.validation.Valid;
 
@@ -21,11 +20,9 @@ public class VideoController {
     private static final Logger logger = LoggerFactory.getLogger(VideoController.class);
 
     private final VideoService videoService;
-    private final VideoEngagementService engagementService;
 
-    public VideoController(VideoService videoService, VideoEngagementService engagementService) {
+    public VideoController(VideoService videoService) {
         this.videoService = videoService;
-        this.engagementService = engagementService;
     }
 
     @GetMapping("/list")
