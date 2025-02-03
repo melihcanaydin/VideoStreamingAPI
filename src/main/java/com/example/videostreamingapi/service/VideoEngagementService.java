@@ -43,37 +43,12 @@ public class VideoEngagementService {
 
     @Transactional
     private void updateEngagementStats(Long videoId, boolean isView) {
-        int updatedRows = isView ? engagementRepository.incrementViewCount(videoId)
-                : engagementRepository.incrementImpressionCount(videoId);
-
-        if (updatedRows == 0) {
-            VideoEngagement engagement = findOrCreateEngagement(videoId);
-
-            if (isView) {
-                engagement.setViews(engagement.getViews() + 1);
-                logger.info("Created engagement and updated view count for video ID: {}. Total views: {}", videoId,
-                        engagement.getViews());
-            } else {
-                engagement.setImpressions(engagement.getImpressions() + 1);
-                logger.info("Created engagement and updated impression count for video ID: {}. Total impressions: {}",
-                        videoId, engagement.getImpressions());
-            }
-
-            engagementRepository.save(engagement);
+        if (isView) {
+            engagementRepository.upsertView(videoId);
+            logger.info("View count updated for video ID: {}", videoId);
+        } else {
+            engagementRepository.upsertImpression(videoId);
+            logger.info("Impression count updated for video ID: {}", videoId);
         }
-    }
-
-    private VideoEngagement findOrCreateEngagement(Long videoId) {
-        return engagementRepository.findByVideoId(videoId)
-                .orElseGet(() -> createNewEngagement(videoId));
-    }
-
-    private VideoEngagement createNewEngagement(Long videoId) {
-        Video video = videoRepository.findByIdAndActiveTrue(videoId)
-                .orElseThrow(() -> new VideoNotFoundException("Active video not found with ID: " + videoId));
-
-        VideoEngagement newEngagement = new VideoEngagement();
-        newEngagement.setVideo(video);
-        return engagementRepository.save(newEngagement);
     }
 }

@@ -14,11 +14,21 @@ public interface VideoEngagementRepository extends JpaRepository<VideoEngagement
 
     @Modifying
     @Transactional
-    @Query("UPDATE VideoEngagement v SET v.views = v.views + 1 WHERE v.video.id = :videoId")
-    int incrementViewCount(Long videoId);
+    @Query(value = """
+            INSERT INTO video_engagement (video_id, views, impressions)
+            VALUES (:videoId, 1, 0)
+            ON CONFLICT (video_id)
+            DO UPDATE SET views = video_engagement.views + 1
+            """, nativeQuery = true)
+    void upsertView(Long videoId);
 
     @Modifying
     @Transactional
-    @Query("UPDATE VideoEngagement v SET v.impressions = v.impressions + 1 WHERE v.video.id = :videoId")
-    int incrementImpressionCount(Long videoId);
+    @Query(value = """
+            INSERT INTO video_engagement (video_id, views, impressions)
+            VALUES (:videoId, 0, 1)
+            ON CONFLICT (video_id)
+            DO UPDATE SET impressions = video_engagement.impressions + 1
+            """, nativeQuery = true)
+    void upsertImpression(Long videoId);
 }
