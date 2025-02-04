@@ -29,7 +29,7 @@ public class VideoEngagementController {
             @ApiResponse(responseCode = "200", description = "Engagement statistics retrieved successfully"),
             @ApiResponse(responseCode = "404", description = "Video not found")
     })
-    @GetMapping("/{id}/engagement")
+    @GetMapping("/{videoId}/engagement")
     public ResponseEntity<VideoEngagementResponse> getEngagementStats(@PathVariable Long videoId) {
         VideoEngagementResponse response = engagementService.getEngagementStats(videoId);
 
