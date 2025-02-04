@@ -1,11 +1,9 @@
 package com.example.videostreamingapi.service;
 
 import com.example.videostreamingapi.dto.response.VideoEngagementResponse;
-import com.example.videostreamingapi.entity.Video;
 import com.example.videostreamingapi.entity.VideoEngagement;
 import com.example.videostreamingapi.exception.VideoNotFoundException;
 import com.example.videostreamingapi.repository.VideoEngagementRepository;
-import com.example.videostreamingapi.repository.VideoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -16,11 +14,9 @@ public class VideoEngagementService {
     private static final Logger logger = LoggerFactory.getLogger(VideoEngagementService.class);
 
     private final VideoEngagementRepository engagementRepository;
-    private final VideoRepository videoRepository;
 
-    public VideoEngagementService(VideoEngagementRepository engagementRepository, VideoRepository videoRepository) {
+    public VideoEngagementService(VideoEngagementRepository engagementRepository) {
         this.engagementRepository = engagementRepository;
-        this.videoRepository = videoRepository;
     }
 
     @Transactional

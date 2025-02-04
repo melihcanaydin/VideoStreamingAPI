@@ -87,14 +87,19 @@ public class VideoService {
     @Transactional
     public VideoResponse updateMetadata(Long id, VideoRequest videoRequest) {
         logger.info("Updating metadata for video ID: {}", id);
+
         return videoRepository.findByIdAndActiveTrue(id)
                 .map(video -> {
                     VideoMapper.updateMetadata(video, videoRequest);
                     Video updatedVideo = videoRepository.save(video);
+
                     logger.info("Metadata updated successfully for video ID: {}", updatedVideo.getId());
                     return VideoMapper.toResponse(updatedVideo);
                 })
-                .orElseThrow(() -> new VideoNotFoundException("Active video not found with ID: " + id));
+                .orElseThrow(() -> {
+                    logger.warn("Update failed: Active video not found with ID: {}", id);
+                    return new VideoNotFoundException("Active video not found with ID: " + id);
+                });
     }
 
     private Video reactivateVideo(Video video) {

@@ -404,6 +404,8 @@ To simplify API testing, you can use the provided **Postman Collection**. Import
 
 To execute unit and integration tests:
 
+- 1. Run video_db over Docker
+
 ```sh
 mvn test
 ```
