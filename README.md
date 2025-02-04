@@ -65,27 +65,242 @@ The **Video Streaming API** follows a structured API-driven approach to ensure f
 
 ---
 
+## 🚀 Features
+
+- Video upload and streaming
+- Metadata management (title, director, genre, etc.)
+- Video search functionality
+- Analytics tracking for user engagement
+
+## 🛠️ Technologies Used
+
+- **Backend:** Spring Boot, Java 17
+- **Database:** PostgreSQL (or another specified database)
+- **Storage:** Local file storage
+- **Logging & Monitoring:** Log4j, Prometheus, Grafana
+
+## 📖 API Documentation
+
 This **API-Driven Design** ensures that the **Video Streaming API** remains **scalable, reliable, and easy to integrate** while adhering to industry best practices.
 
-## Endpoints
+### **1. Get All Videos & Search Videos**
 
-### Video Management
+#### Request
 
-| Method | Endpoint         | Description                  |
-| ------ | ---------------- | ---------------------------- |
-| POST   | `/videos`        | Uploads a video and metadata |
-| PUT    | `/videos/{id}`   | Updates video metadata       |
-| DELETE | `/videos/{id}`   | Soft deletes a video         |
-| GET    | `/videos`        | Lists all available videos   |
-| GET    | `/videos/search` | Searches videos by metadata  |
+```http
+GET /videos
+```
 
-### Video Streaming & Engagement
+#### Response
 
-| Method | Endpoint             | Description                    |
-| ------ | -------------------- | ------------------------------ |
-| GET    | `/videos/{id}/load`  | Loads video metadata & content |
-| GET    | `/videos/{id}/play`  | Streams video content          |
-| GET    | `/videos/{id}/stats` | Retrieves impressions & views  |
+```json
+[
+  {
+    "id": 2,
+    "title": "Inception",
+    "director": "Christopher Nolan",
+    "mainActor": "Leonardo DiCaprio",
+    "genre": "Sci-Fi",
+    "runningTime": 148
+  }
+]
+```
+
+### **2. Get Video Details**
+
+#### Request
+
+```http
+GET /videos/{id}
+```
+
+#### Response
+
+```json
+{
+  "id": 2,
+  "title": "Inception",
+  "director": "Christopher Nolan",
+  "mainActor": "Leonardo DiCaprio",
+  "genre": "Sci-Fi",
+  "runningTime": 148
+}
+```
+
+### **3. Create a New Video**
+
+#### Request
+
+```http
+POST /videos
+Content-Type: application/json
+```
+
+#### Body
+
+```json
+{
+  "title": "Inception",
+  "director": "Christopher Nolan",
+  "mainActor": "Leonardo DiCaprio",
+  "genre": "Sci-Fi",
+  "runningTime": 148
+}
+```
+
+#### Response
+
+```json
+{
+  "id": 3,
+  "title": "Inception",
+  "director": "Christopher Nolan",
+  "mainActor": "Leonardo DiCaprio",
+  "genre": "Sci-Fi",
+  "runningTime": 148
+}
+```
+
+### **4. Play Video**
+
+#### Request
+
+```http
+GET /videos/{id}/play
+```
+
+#### Response
+
+```
+Streaming video: Inception
+```
+
+### **5. Get Video Engagement**
+
+#### Request
+
+```http
+GET /videos/{id}/engagement
+```
+
+#### Response
+
+```json
+{
+  "videoId": 2,
+  "views": 5,
+  "impressions": 16
+}
+```
+
+### **6. Update Video Details**
+
+#### Request
+
+```http
+PUT /videos/{id}
+Content-Type: application/json
+```
+
+#### Body
+
+```json
+{
+  "title": "Updated Video Title",
+  "director": "Updated Director",
+  "mainActor": "Updated Actor",
+  "genre": "Updated Genre",
+  "runningTime": 160
+}
+```
+
+#### Response
+
+```json
+{
+  "id": 2,
+  "title": "Updated Video Title",
+  "director": "Updated Director",
+  "mainActor": "Updated Actor",
+  "genre": "Updated Genre",
+  "runningTime": 160
+}
+```
+
+### **7. Delete a Video**
+
+#### Request
+
+```http
+DELETE /videos/{id}
+```
+
+#### Response
+
+```json
+{
+  "message": "Video successfully deleted"
+}
+```
+
+# 🗄 Database Schema
+
+The database consists of the following tables:
+
+## 1. `videos`
+
+Stores information about each video.
+
+| Column         | Data Type      | Constraints   | Description                         |
+| -------------- | -------------- | ------------- | ----------------------------------- |
+| `id`           | `SERIAL`       | Primary Key   | Unique identifier for each video.   |
+| `title`        | `VARCHAR(255)` | NOT NULL      | Title of the video.                 |
+| `director`     | `VARCHAR(255)` |               | Director of the video.              |
+| `main_actor`   | `VARCHAR(255)` |               | Main actor in the video.            |
+| `genre`        | `VARCHAR(100)` |               | Genre of the video.                 |
+| `running_time` | `INT`          |               | Duration of the video in minutes.   |
+| `created_at`   | `TIMESTAMP`    | DEFAULT NOW() | Timestamp when the video was added. |
+
+### SQL Definition:
+
+```sql
+CREATE TABLE videos (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    director VARCHAR(255),
+    main_actor VARCHAR(255),
+    genre VARCHAR(100),
+    running_time INT,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+## 2. `video_engagement`
+
+Tracks engagement metrics for each video.
+
+| Column        | Data Type | Constraints                   | Description                                                                      |
+| ------------- | --------- | ----------------------------- | -------------------------------------------------------------------------------- |
+| `id`          | `SERIAL`  | Primary Key                   | Unique identifier for each engagement record.                                    |
+| `video_id`    | `INT`     | Foreign Key, UNIQUE, NOT NULL | References the `id` in the `videos` table. Each video has one engagement record. |
+| `views`       | `INT`     | DEFAULT 0                     | Number of times the video has been viewed.                                       |
+| `impressions` | `INT`     | DEFAULT 0                     | Number of times the video has been displayed or accessed.                        |
+
+### SQL Definition:
+
+```sql
+CREATE TABLE video_engagement (
+    id SERIAL PRIMARY KEY,
+    video_id INT UNIQUE NOT NULL REFERENCES videos(id),
+    views INT DEFAULT 0,
+    impressions INT DEFAULT 0
+);
+```
+
+## Notes:
+
+- The `video_engagement` table has a one-to-one relationship with the `videos` table, ensuring each video has a unique engagement record.
+- The `views` and `impressions` columns are initialized to zero by default and can be incremented to reflect user interactions.
 
 ## Future Improvements
 
@@ -136,7 +351,7 @@ To make this Video Streaming API suitable for real-world applications, the follo
 
 ## How to Run the Project
 
-### Running the Application
+## 📦 Installation & Setup
 
 ### 1. Clone the Repository
 
