@@ -59,9 +59,34 @@ The **Video Streaming API** follows a structured API-driven approach to ensure f
 
 #### **5. Scalability & Performance Enhancements**
 
+- Designed to scale horizontally by adding more application instances behind a load balancer.
+- Uses pagination for listing videos to handle large datasets efficiently.
+- Logging is centralized, making it easier to monitor in distributed environments.
 - Can be extended with **Redis or Memcached** for caching frequently accessed metadata.
 - Prepared for **asynchronous event handling** via Kafka or RabbitMQ for tracking engagement metrics without blocking requests.
 - Future-proofed for **GraphQL support**, allowing more flexible querying of video metadata.
+
+#### **6. Testing Strategy**
+
+- Unit Tests: Mockito is used to isolate components and mock dependencies.
+- Integration Tests: Testcontainers ensures a real PostgreSQL instance is used for testing.
+- Controller Tests: Uses MockMvc to test API endpoints.
+
+#### **7. Testcontainers for Database Isolation**
+
+- The application uses Testcontainers to spin up a temporary PostgreSQL container for testing.
+- Ensures tests do not rely on a local database setup and remain consistent across environments.
+
+#### **8. Containerization & Deployment Strategy**
+
+- The project is container-ready, meaning it can be easily deployed with Docker.
+- Uses Docker Compose or Kubernetes for deployment in production-like environments.
+
+#### **9. Code Maintainability & Best Practices**
+
+- Uses Lombok to reduce boilerplate code.
+- Method extractions improve readability and reusability.
+- Consistent coding standards are maintained across the project.
 
 ---
 
@@ -396,6 +421,18 @@ Once the application is running, you can access the API at:
 - **Play Video:** `GET` → `http://localhost:8080/videos/{id}/play`
 - **Retrieve Engagement Stats:** `GET` → `http://localhost:8080/videos/{id}/stats`
 
+#### Swagger API Documentation
+
+The API includes Swagger UI for interactive API documentation, making it easier to explore, test, and integrate the available endpoints.
+
+#### 📌 How to Access Swagger UI
+
+Once the application is running, you can access the Swagger documentation via:
+
+```bash
+http://localhost:8080/swagger-ui/index.html
+```
+
 ### Postman Collection
 
 To simplify API testing, you can use the provided **Postman Collection**. Import it into **Postman** and run the predefined requests.
@@ -404,7 +441,7 @@ To simplify API testing, you can use the provided **Postman Collection**. Import
 
 To execute unit and integration tests:
 
-- 1. Run video_db over Docker
+- Run video_db over Docker and;
 
 ```sh
 mvn test

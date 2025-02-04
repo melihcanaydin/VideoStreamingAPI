@@ -1,29 +1,26 @@
 package com.example.videostreamingapi.dto.request;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Schema(description = "Request payload for creating or updating a video")
 public class VideoRequest {
-    @NotBlank(message = "Title is required")
+
+    @Schema(description = "Title of the video", example = "Inception")
     private String title;
 
-    @NotBlank(message = "Director is required")
+    @Schema(description = "Director of the video", example = "Christopher Nolan")
     private String director;
 
-    @NotBlank(message = "Main actor is required")
+    @Schema(description = "Main actor in the video", example = "Leonardo DiCaprio")
     private String mainActor;
 
-    @NotBlank(message = "Genre is required")
+    @Schema(description = "Genre of the video", example = "Sci-Fi")
     private String genre;
 
-    @Min(value = 1, message = "Running time must be at least 1 minute")
+    @Schema(description = "Running time in minutes", example = "148")
     private int runningTime;
 }
